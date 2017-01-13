@@ -1,0 +1,17 @@
+classes:
+  - roles::dhs_app1
+  
+ 
+consul::services:
+  'dhs_app1_server':
+    port: 8080
+    token: "%{hiera('consul::service_write_token')}"
+    tags:
+      - dhs_app1_server
+    checks:
+     - id: "%{::server_role}-healthcheck"
+       name: "Healthcheck for service %{::server_role} in %{::environment}"
+       service_id: "%{::environment}-%{::server_role}"
+       tcp: "localhost:8080"
+       interval: '10s'
+       timeout: '1s'
