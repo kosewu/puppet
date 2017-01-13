@@ -1,0 +1,31 @@
+classes:
+  - roles::puppetmaster
+  - epel
+
+mcollective::client: true
+
+
+consul::server: false
+consul::services:
+  'puppet_server':
+    port: 8140
+    token: "%{hiera('consul::service_write_token')}"
+    tags:
+      - puppet_server
+    checks:
+     - id: "%{::server_role}-healthcheck"
+       name: "Healthcheck for service %{::server_role} in %{::environment}"
+       service_id: "%{::environment}-%{::server_role}"
+       tcp: "localhost:8140"
+       interval: '10s'
+       timeout: '1s'
+
+
+    
+
+firewall::ports:
+ '101 allow Port 8140':
+   dport: [8080,8140]
+   proto: 'tcp'
+ 
+    
